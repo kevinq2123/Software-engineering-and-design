@@ -1,0 +1,82 @@
+﻿@page
+@model RegisterModel
+
+@using RochaBlogs.Services.Interfaces
+@using Microsoft.Extensions.Configuration
+@inject IImageService _imageService
+@inject IConfiguration _configuration
+
+
+@{
+
+    ViewData["Title"] = "Register";
+    ViewData["MainText"] = "Register User";
+    ViewData["SubText"] = "Join the party!";
+
+    var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+    var defaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
+    ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+}
+
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-lg-8 col-md-10 mx-auto">
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
+            <h1>@ViewData["Title"]</h1>
+            <h4 class="mt-4">Create a new account.</h4>
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.FirstName"></label>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.DisplayName"></label>
+                <input asp-for="Input.DisplayName" class="form-control" />
+                <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.ImageFile"></label>
+                <input asp-for="Input.ImageFile" type="file" class="form-control" accept=".jpg,.png,.jpeg" />
+                <span asp-validation-for="Input.ImageFile" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.Email"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.Password"></label>
+                <input asp-for="Input.Password" class="form-control" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <label asp-for="Input.ConfirmPassword"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-dark rounded mt-3">Register</button>
+        </form>
+        </div>
+    
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

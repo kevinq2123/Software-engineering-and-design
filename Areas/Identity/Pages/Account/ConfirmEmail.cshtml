@@ -1,0 +1,22 @@
+﻿@page
+@model ConfirmEmailModel
+
+@using RochaBlogs.Services.Interfaces
+@using Microsoft.Extensions.Configuration
+@inject IImageService _imageService
+@inject IConfiguration _configuration
+
+
+@{
+
+    ViewData["Title"] = "Confirm email";
+    ViewData["MainText"] = "Confirm your email";
+    ViewData["SubText"] = "Get to the finish line!";
+
+    var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+    var defaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
+    ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+}
+
+<h1>@ViewData["Title"]</h1>
+<partial name="_StatusMessage" model="Model.StatusMessage" />

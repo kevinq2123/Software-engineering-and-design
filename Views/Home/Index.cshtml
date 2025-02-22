@@ -1,0 +1,157 @@
+﻿@using RochaBlogs.Models
+@using RochaBlogs.Enums
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<Blog>
+@inject RochaBlogs.Services.Interfaces.IImageService imageService
+@{
+    ViewData["Title"] = "Home Pagesss";
+}
+
+
+<!--User.IsInRole("Administrator")-->
+
+@if (User.IsInRole("Administrator"))
+{
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5">
+            <div class="col">
+                <p>
+                    <a id="adminPills" class="btn btn-outline-primary text-decoration-none"
+                        asp-controller="Blogs"
+                        asp-action="Create"><i class="far fa-folder-open"></i> New Blog</a>
+                </p>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+
+@* 
+@if(Model.PageCount > 1)
+{
+    <div class="container px-4 px-lg-5 mb-4">
+        <div class="row gx-4 gx-lg-5">
+            <div class="col">
+                <!-- I changed the code-->
+              @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }),
+                new PagedListRenderOptions
+                {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" }
+                })
+            </div>
+        </div>
+    </div>
+}
+ *@
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5">
+        <div class="col">
+            @foreach (var blogs in Model)
+            {
+                <div class="post-preview">
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <img id="blogImage" class="card-img-top img-fluid" src="@imageService.DecodeImage(blogs.ImageData, blogs.ContentType)" alt="Blog logo" />
+                            <a class="btn btn-dark w-100 mb-3" asp-controller="Posts" asp-action="BlogPostIndex" asp-route-id="@blogs.Id">Read Posts</a>
+                        </div>
+                        <div class="col col-md-8">
+                            <a asp-controller="Posts" asp-action="BlogPostIndex" asp-route-id="@blogs.Id">
+                                <h2 class="post-title">@blogs.Name</h2>
+                            </a>
+                            <h3 class="post-subtitle text-black-50 fw-normal">@blogs.Description</h3>
+                            <p class="post-meta">
+                                Posted by
+                                @blogs.BlogUser.DisplayName
+                                on @blogs.Created.ToString("MMM dd, yyyy")
+                            </p>
+
+
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <a id="adminPills" class="badge bg-primary text-decoration-none"
+                                   asp-action="Create"
+                                   asp-controller="Posts"
+                                   asp-route-blogId="@blogs.Id">Create Post</a>
+
+                                <a id="adminPills" class="badge bg-success text-decoration-none"
+                                   asp-action="Edit"
+                                   asp-controller="Blogs"
+                                   asp-route-id="@blogs.Id">Edit Blog</a>
+
+                               
+                                <button id="adminPills" type="button" class="badge bg-danger border-0" data-bs-toggle="modal" data-bs-target="#deleteModal_@blogs.Id">Delete Blog</button>
+                            }
+
+                        </div>
+                    </div>
+                    <hr />
+
+                </div>
+
+                @* Delete Modal *@
+                <div class="modal" id="deleteModal_@blogs.Id">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Confirm deletion of Blog...</h4>
+                            </div>
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <form asp-controller="Blogs" asp-action="Delete" method="POST">
+                                    @* This html.hidden is important to delete the blog properly *@
+                                    @Html.Hidden("Id", blogs.Id)
+                                    <div class="form-group">
+                                        <label class="control-label">Blog Name</label> 
+                                        <input name="Name" class="form-control" disabled style="resize: none;" value="@blogs.Name"/>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label class="control-label">Blog Description</label>
+                                        <textarea name="Description" class="form-control" disabled>@blogs.Description</textarea>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <div class="row">
+                                            <div class="col">
+                                                <button id="adminPills" class="badge bg-danger border-0" type="submit">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Modal Footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-dark" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@* 
+@if(Model.PageCount > 1)
+{
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5">
+            <div class="col">
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }),
+                new PagedListRenderOptions
+                {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" }
+                })
+            </div>
+        </div>
+    </div>
+} *@

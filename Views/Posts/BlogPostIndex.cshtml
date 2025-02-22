@@ -1,0 +1,142 @@
+﻿@using RochaBlogs.Services.Interfaces
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<RochaBlogs.Models.Post>
+@inject IImageService imageService
+
+@{
+    ViewData["Title"] = "Blog Posts Index";
+}
+
+@if (User.IsInRole("Administrator"))
+{
+    <div class="container px-4 px-lg-5 mb-3">
+        <div class="row gx-4 gx-lg-5">
+            <p>
+                <a id="adminPills" class="btn btn-outline-primary text-decoration-none" 
+                   asp-action="Create" 
+                   asp-route-blogid="@Model.FirstOrDefault()?.BlogId"><i class="fas fa-pencil-alt"></i>New Post</a>
+            </p>
+        </div>
+    </div>
+}
+
+
+<div class="container px-4 px-lg-5 mb-3">
+    <div class="row gx-4 gx-lg-5">
+        <div class="col-12 col-md-4">
+            <a id="adminPills" class="badge bg-dark text-decoration-none"
+                asp-action="Index"
+                asp-controller="Home">Return to Blog List</a>
+        </div>
+    </div>
+</div>
+
+
+@if(Model.PageCount > 1)
+{
+    <div class="row ms-2">
+        <div class="col">
+            @Html.PagedListPager(Model, page => Url.Action("BlogPostIndex", new { id = @Model.FirstOrDefault()?.BlogId, page = page }),
+            new PagedListRenderOptions
+            {
+                LiElementClasses = new string[] { "page-item" },
+                PageClasses = new string[] { "page-link" }
+            })
+        </div>
+    </div>
+}
+
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5">
+        <div class="col">
+            @foreach (var post in Model)
+            {
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <img id="postImage" class="card-img-top img-fluid" src="@imageService.DecodeImage(post.ImageData, post.ContentType)" />
+                        <a class="btn btn-dark w-100" asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">Read Full Post</a>
+                    </div>
+                    <div class="col col-md-8">
+                        <a asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">
+                            <h2 class="post-title">@post.Title</h2>
+                        </a>
+                        <h3 class="post-subtitle text-black-50 fw-normal">@post.Abstract</h3>
+                        <p class="post-meta">
+                            Posted by
+                            @post.BlogUser.DisplayName
+                            on @post.Created.ToString("MMM dd, yyyy")
+                        </p>
+
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <a id="adminPills" class="badge bg-success text-decoration-none"
+                               asp-action="Edit"
+                               asp-controller="Posts"
+                               asp-route-id="@post.Id">Edit Post</a>
+
+                            <button id="adminPills" type="button" class="badge bg-danger border-0" data-bs-toggle="modal" data-bs-target="#deleteModal_@post.Id">Delete Post</button>
+                        }
+                    </div>
+                </div>
+                <hr />
+
+                @* Delete Modal *@
+                <div class="modal" id="deleteModal_@post.Id">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Confirm deletion of Post...</h4>
+                            </div>
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <form asp-controller="Posts" asp-action="Delete" method="POST">
+                                    <input type="hidden" name="Id" for="Id" value="@post.Id" />
+                                    <div class="form-group">
+                                        <label class="control-label">Post Title</label>
+                                        <input name="Title" class="form-control" disabled style="resize: none;" value="@post.Title"/>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label class="control-label">Post Abstract</label>
+                                        <input name="Abstract" class="form-control" disabled style="resize: none;" value="@post.Abstract"/>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <div class="row">
+                                            <div class="col">
+                                                <button id="adminPills" class="badge bg-danger border-0" type="submit">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Modal Footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-dark" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@if(Model.PageCount > 1)
+{
+    <div class="row ms-2">
+        <div class="col">
+            @Html.PagedListPager(Model, page => Url.Action("BlogPostIndex", new { id = @Model.FirstOrDefault()?.BlogId, page = page }),
+            new PagedListRenderOptions
+            {
+                LiElementClasses = new string[] { "page-item" },
+                PageClasses = new string[] { "page-link" }
+            })
+        </div>
+    </div>
+}
+

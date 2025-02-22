@@ -1,0 +1,94 @@
+﻿@using RochaBlogs.Services.Interfaces
+@model IEnumerable<RochaBlogs.Models.Post>
+@inject IImageService imageService
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<h1>Posts Index</h1>
+
+<p>
+    <a id="adminPills" class="badge bg-primary text-decoration-none" asp-action="CreateFromIndex">Create New</a>
+    <a id="adminPills" class="badge bg-dark text-decoration-none"
+                asp-action="Index"
+                asp-controller="Home">Back to Home</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Abstract)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageData)
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) 
+    {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Abstract)
+                </td>
+                <td>
+                    <img class="img-fluid" width="200" src="@imageService.DecodeImage(item.ImageData, item.ContentType)" />
+                </td>
+                <td>
+                    <a id="adminPills" class="badge bg-success text-decoration-none" asp-action="EditFromIndex" asp-route-id="@item.Id">Edit</a> |
+                    <a id="adminPills" class="badge bg-info text-decoration-none" asp-action="Details" asp-route-slug="@item.Slug">Details</a> |
+                    <button id="adminPills" type="button" class="badge bg-danger border-0" data-bs-toggle="modal" data-bs-target="#deleteModal_@item.Id">Delete</button>
+                </td>
+            </tr>
+
+            @* Delete Modal *@
+            <div class="modal" id="deleteModal_@item.Id">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Confirm deletion of Post...</h4>
+                        </div>
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                            <form asp-controller="Posts" asp-action="DeleteFromIndex" method="POST">
+                                @Html.Hidden("Id", item.Id)
+                                <div class="form-group">
+                                    <label class="control-label">Post Title</label>
+                                    <input name="Title" class="form-control" disabled style="resize: none;" value="@item.Title"/>
+                                </div>
+                                <div class="form-group mt-4">
+                                    <label class="control-label">Post Abstract</label>
+                                    <input name="Abstract" class="form-control" disabled style="resize: none;" value="@item.Abstract"/>
+                                </div>
+                                <div class="form-group mt-4">
+                                    <div class="row">
+                                        <div class="col">
+                                            <button id="adminPills" class="badge bg-danger border-0" type="submit">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-sm btn-dark" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+    </tbody>
+</table>

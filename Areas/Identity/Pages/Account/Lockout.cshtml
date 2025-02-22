@@ -1,0 +1,22 @@
+﻿@page
+@model LockoutModel
+
+@using RochaBlogs.Services.Interfaces
+@using Microsoft.Extensions.Configuration
+@inject IImageService _imageService
+@inject IConfiguration _configuration
+
+@{
+    ViewData["Title"] = "Account Locked";
+    ViewData["MainText"] = "This account is locked";
+    ViewData["SubText"] = "Contact the admin";
+
+    var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+    var defaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
+    ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+}
+
+<header>
+    <h1 class="text-danger">@ViewData["Title"]</h1>
+    <p class="text-danger">This account has been locked out, please try again later.</p>
+</header>

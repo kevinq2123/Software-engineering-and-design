@@ -1,0 +1,37 @@
+﻿@page
+@model RegisterConfirmationModel
+
+@using RochaBlogs.Services.Interfaces
+@using Microsoft.Extensions.Configuration
+@inject IImageService _imageService
+@inject IConfiguration _configuration
+
+
+@{
+
+    ViewData["Title"] = "Register confirmation";
+    ViewData["MainText"] = "Registered Successfully";
+    ViewData["SubText"] = "Welcome to the party!";
+
+    var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+    var defaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
+    ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+}
+
+<h1>@ViewData["Title"]</h1>
+@{
+    if (@Model.DisplayConfirmAccountLink)
+    {
+<p>
+    This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
+    Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
+</p>
+    }
+    else
+    {
+<p>
+        Please check your email to confirm your account.
+</p>
+    }
+}
+
