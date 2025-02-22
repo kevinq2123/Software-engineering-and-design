@@ -1,3 +1,5 @@
-# Rocha-Blog
+## Software engineering and design
 
-THIS IS THE PRIVATE VERSION. 
+The artifact is a blog website that allows users to create blog posts and make changes to them and also comment under the blog post. This artifact was included to be able to show software engineering and design within the field. This artifact showcases my skills and abilities in software development by practicing the design pattern of MVC. This keeps the structure and also allows for keeping the classes and methods organized. This artifact was improved by adding constraints in the classes and for the blog posts so it would require a minimum amount of characters and required it to be added an entry and not empty. This enhancement aligns with demonstrating an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals. It also aligns with developing a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources. What I learned by creating it is that these constraints help with spamming and also potential exploits by not having these constraints contained.
+
+Video of enhancement: https://www.youtube.com/watch?v=Kb0DRTb20VU&feature=youtu.be
